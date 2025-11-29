@@ -123,7 +123,7 @@ python -m venv .venv
 # macOS/Linux:
 source .venv/bin/activate
 # Windows (PowerShell):
-.\.venv\Scripts\Activate.ps1
+.venv\Scripts\Activate.ps1
 ```
 
 ### 3) Install dependencies
@@ -141,7 +141,7 @@ Place these files in the project folder:
 
 ### 5) Start the API
 ```bash
-python -m uvicorn app:app --reload --host 127.0.0.1 --port 8081
+uvicorn app:app --reload --host 127.0.0.1 --port 8081
 ```
 
 **Health check**  

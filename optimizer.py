@@ -1,5 +1,6 @@
 from typing import List
 import numpy as np
+from llm import llm_explanation
 
 from schemas import OptimizeRequest, OptimizeResponse, Trip
 from utils import build_distance_matrix, nearest_neighbor_route, two_opt, route_distance, km_to_minutes
@@ -34,6 +35,14 @@ def optimize(req: OptimizeRequest) -> OptimizeResponse:
     # 6) Names: exclude depot from output route
     route_names = [names[i] for i in best_route if i != 0]
 
+    # 6. Generate LLM explanation
+    explanation = llm_explanation(
+        route_names=route_names,
+        total_km=round(float(total_km), 2),
+        total_min=round(float(total_min), 1),
+        speed=req.average_speed_kmph,
+    )
+
     # 7) Package response (single trip for now; capacity/time windows come later)
     trip = Trip(
         route=route_names,
@@ -48,10 +57,7 @@ def optimize(req: OptimizeRequest) -> OptimizeResponse:
         totalDistanceKm=trip.total_distance_km,
         estimatedTimeMin=trip.total_time_min,
         optimal_trips=[trip],
-        explanation=(
-            "Route computed using Nearest Neighbor + 2-opt over haversine distances. "
-            f"Estimated time assumes {req.average_speed_kmph} km/h average speed."
-        ),
+        explanation=explanation,
         assumptions=[
             "Distances use haversine great-circle approximation.",
             f"Time = distance / {req.average_speed_kmph} km/h (no service time yet).",
