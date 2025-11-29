@@ -2,3 +2,5 @@ fastapi
 uvicorn
 pydantic
 numpy
+mistralai
+python-dotenv
